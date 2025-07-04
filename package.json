@@ -1,6 +1,6 @@
 {
   "name": "git-changelog-manager",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A comprehensive changelog management tool for automated release notes and version management",
   "main": "lib/index.js",
   "bin": {
@@ -10,7 +10,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "node scripts/postinstall.js"
+    "postinstall": "node scripts/postinstall.js",
+    "preuninstall": "node scripts/preuninstall.js"
   },
   "keywords": [
     "changelog",
