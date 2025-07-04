@@ -61,17 +61,23 @@ function addChangelogScripts() {
     if (scriptsAdded.length > 0) {
       fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
       
-      console.log('✅ git-changelog-manager: Added npm scripts to package.json');
-      console.log(`   Added: ${scriptsAdded.join(', ')}`);
+      console.log('\n' + '='.repeat(60));
+      console.log('🎉 git-changelog-manager installed successfully!');
+      console.log('✅ Added npm scripts to package.json:');
+      console.log(`   ${scriptsAdded.join(', ')}`);
       
       if (scriptsSkipped.length > 0) {
-        console.log(`   Skipped (already exist): ${scriptsSkipped.join(', ')}`);
+        console.log(`⚠️  Skipped (already exist): ${scriptsSkipped.join(', ')}`);
       }
       
-      console.log('\n📝 Usage:');
-      console.log('   npm run changelog:add        # Add recent commits to changelog');
-      console.log('   npm run changelog:release    # Create a new release');
-      console.log('   npx changelog-init           # Initialize changelog (first time setup)');
+      console.log('\n🚀 Quick Start:');
+      console.log('   npx changelog-init           # First-time setup');
+      console.log('   npm run changelog:add        # Add recent commits');
+      console.log('   npm run changelog:release    # Create release');
+      console.log('\n📖 Documentation:');
+      console.log('   GitHub: https://github.com/jonellwood/git-changelog-manager');
+      console.log('   Help:   npx changelog-add --help');
+      console.log('='.repeat(60) + '\n');
     } else {
       console.log('📦 git-changelog-manager: npm scripts already exist in package.json');
     }
