@@ -1,0 +1,82 @@
+name: Publish to NPM
+
+on:
+  push:
+    branches: [ main ]
+    # Only trigger if package.json version changed (prevents infinite loops)
+    paths:
+      - 'package.json'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    # Only run if the commit message includes version bump or is a version tag
+    if: contains(github.event.head_commit.message, 'version') || startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run tests (if any)
+        run: npm test --if-present
+        
+      - name: Check if version changed
+        id: version-check
+        run: |
+          # Get the current version from package.json
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          
+          # Check if this version exists on NPM
+          if npm view git-changelog-manager@$CURRENT_VERSION version 2>/dev/null; then
+            echo "version_exists=true" >> $GITHUB_OUTPUT
+            echo "Version $CURRENT_VERSION already exists on NPM"
+          else
+            echo "version_exists=false" >> $GITHUB_OUTPUT
+            echo "Version $CURRENT_VERSION is new, will publish"
+          fi
+          
+      - name: Publish to NPM
+        if: steps.version-check.outputs.version_exists == 'false'
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+      - name: Create GitHub Release
+        if: steps.version-check.outputs.version_exists == 'false'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version-check.outputs.current_version }}
+          release_name: Release v${{ steps.version-check.outputs.current_version }}
+          body: |
+            🚀 **Automated Release v${{ steps.version-check.outputs.current_version }}**
+            
+            This release was automatically created and published to NPM.
+            
+            ### Changes
+            - See commit history for detailed changes
+            
+            ### Installation
+            ```bash
+            npm install git-changelog-manager@${{ steps.version-check.outputs.current_version }}
+            ```
+          draft: false
+          prerelease: false
+          
+      - name: Notify success
+        if: success()
+        run: |
+          echo "✅ Successfully published git-changelog-manager@${{ steps.version-check.outputs.current_version }} to NPM"
+          echo "📦 Package is now available at: https://www.npmjs.com/package/git-changelog-manager"
