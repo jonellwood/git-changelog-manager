@@ -17,6 +17,9 @@ program
     .option('-r, --root <path>', 'Project root directory', process.cwd())
     .option('--openai-key <key>', 'OpenAI API key (overrides env)')
     .option('--claude-key <key>', 'Claude API key (overrides env)')
+    .option('--gemini-key <key>', 'Gemini API key (overrides env)')
+    .option('--emojis', 'Enable emoji-enhanced changelog entries')
+    .option('--no-emojis', 'Disable emoji-enhanced changelog entries')
     .parse();
 
 const options = program.opts();
@@ -36,6 +39,14 @@ if (options.openaiKey) {
 } else if (options.claudeKey) {
     config.aiApiKey = options.claudeKey;
     config.aiApiType = 'claude';
+} else if (options.geminiKey) {
+    config.aiApiKey = options.geminiKey;
+    config.aiApiType = 'gemini';
+}
+
+// Set emoji preference if provided
+if (options.emojis !== undefined) {
+    config.useEmojis = options.emojis;
 }
 
 // Create changelog manager and run

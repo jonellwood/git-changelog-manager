@@ -33,6 +33,26 @@ function question(prompt) {
 async function init() {
     try {
         console.log('🚀 Initializing changelog-manager...\n');
+        
+        // Inform users about AI requirements upfront
+        console.log('🤖 \x1b[1mAI Enhancement Information\x1b[0m');
+        console.log('You have the option to use AI for generating and formatting changelog entries.');
+        console.log('If you want to use AI features, you will need:');
+        console.log('  • An API key for either ChatGPT, Claude, or Gemini');
+        console.log('  • The GitHub repository URL for this project (for releases)');
+        console.log('');
+        console.log('💡 You can also add these values later by updating your .env file');
+        console.log('   and changelog.config.json if you prefer to skip them now.');
+        console.log('');
+        
+        const readyToProceed = await question('Ready to proceed? (Y/n): ');
+        if (readyToProceed.toLowerCase() === 'n' || readyToProceed.toLowerCase() === 'no') {
+            console.log('👋 Setup cancelled. Run again when you\'re ready!');
+            rl.close();
+            return;
+        }
+        
+        console.log('\n📁 Setting up project structure...');
 
         const projectRoot = path.resolve(options.root);
         const changelogDir = path.resolve(projectRoot, options.dir);
@@ -64,6 +84,9 @@ tag:
             console.log('📝 Created initial draft file');
         }
 
+        // Declare variables for API keys to check later
+        let openaiKey = '', claudeKey = '', geminiKey = '', githubToken = '', githubRepo = '';
+        
         // Create .env file if requested
         if (!options.skipEnv) {
             const envPath = path.join(projectRoot, '.env');
@@ -73,15 +96,17 @@ tag:
             } catch {
                 console.log('\n⚙️  Setting up environment variables...');
                 
-                const openaiKey = await question('OpenAI API Key (optional): ');
-                const claudeKey = await question('Claude API Key (optional): ');
-                const githubToken = await question('GitHub Token (optional): ');
-                const githubRepo = await question('GitHub Repository (e.g., user/repo, optional): ');
+                openaiKey = await question('OpenAI API Key (optional): ');
+                claudeKey = await question('Claude API Key (optional): ');
+                geminiKey = await question('Gemini API Key (optional): ');
+                githubToken = await question('GitHub Token (optional): ');
+                githubRepo = await question('GitHub Repository (format: username/repo-name, optional): ');
 
                 let envContent = '# Changelog Manager Environment Variables\n\n';
                 
                 if (openaiKey) envContent += `OPENAI_API_KEY=${openaiKey}\n`;
                 if (claudeKey) envContent += `CLAUDE_API_KEY=${claudeKey}\n`;
+                if (geminiKey) envContent += `GEMINI_API_KEY=${geminiKey}\n`;
                 if (githubToken) envContent += `GITHUB_TOKEN=${githubToken}\n`;
                 if (githubRepo) envContent += `GITHUB_REPOSITORY=${githubRepo}\n`;
 
@@ -90,6 +115,18 @@ tag:
             }
         }
 
+        // Ask about emoji preference only if AI keys were provided
+        let useEmojis = false;
+        const hasAiKeys = openaiKey || claudeKey || geminiKey;
+        
+        if (hasAiKeys) {
+            console.log('\n🎨 AI Enhancement Options...');
+            const emojiResponse = await question('Do you want AI to add emojis to your changelog entries? (Y/n): ');
+            useEmojis = !emojiResponse || emojiResponse.toLowerCase() === 'y' || emojiResponse.toLowerCase() === 'yes';
+        } else {
+            console.log('\n📝 No AI API keys provided - using standard changelog format without emoji enhancement.');
+        }
+        
         // Create config file if requested
         if (!options.skipConfig) {
             const configPath = path.join(projectRoot, 'changelog.config.json');
@@ -101,6 +138,7 @@ tag:
                     changelogDir: options.dir,
                     draftFileName: "draft.md",
                     gitTimeRange: "1 day ago",
+                    useEmojis: useEmojis,
                     versionFiles: [
                         {
                             path: "package.json",
@@ -146,11 +184,16 @@ tag:
         }
 
         console.log('\n✅ Changelog-manager initialized successfully!');
-        console.log('\nUsage:');
+        console.log('\n📚 Usage:');
         console.log('  npm run changelog:add        # Add recent commits to changelog');
         console.log('  npm run changelog:release    # Create a new release');
         console.log('  changelog-add -m "message"   # Add custom message');
         console.log('  changelog-release -t minor   # Create minor release');
+        console.log('');
+        console.log('💡 Tips:');
+        console.log('  • Edit .env to add your API keys anytime');
+        console.log('  • Update changelog.config.json to change settings');
+        console.log('  • Use --emojis or --no-emojis flags to override emoji settings');
 
     } catch (error) {
         console.error('❌ Initialization failed:', error.message);
