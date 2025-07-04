@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 const { Command } = require('commander');
-const { ReleaseManager } = require('../lib');
+const { ReleaseManager, ChangelogManager } = require('../lib');
+const readline = require('readline');
 require('dotenv').config();
 
 const program = new Command();
@@ -18,9 +19,25 @@ program
     .option('--github-token <token>', 'GitHub token (overrides env)')
     .option('--github-repo <repo>', 'GitHub repository (overrides env)')
     .option('--config <path>', 'Path to config file')
+    .option('--skip-pending-check', 'Skip checking for pending commits')
     .parse();
 
 const options = program.opts();
+
+// Helper function to prompt user
+function prompt(question) {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    
+    return new Promise(resolve => {
+        rl.question(question, answer => {
+            rl.close();
+            resolve(answer.trim().toLowerCase());
+        });
+    });
+}
 
 // Validate bump type
 const validTypes = ['major', 'minor', 'patch'];
@@ -54,10 +71,37 @@ const config = {
     ...fileConfig
 };
 
-// Create release manager and run
-const manager = new ReleaseManager(config);
+// Main execution function
+async function main() {
+    try {
+        // Check for pending commits unless skipped
+        if (!options.skipPendingCheck) {
+            const changelogManager = new ChangelogManager(config);
+            const hasPending = await changelogManager.hasPendingCommits();
+            
+            if (hasPending) {
+                console.log('\n⚠️  You have commits that haven\'t been added to the changelog yet.');
+                const answer = await prompt('Would you like to run changelog:add first? (y/n): ');
+                
+                if (answer === 'y' || answer === 'yes') {
+                    console.log('\n📝 Running changelog:add...');
+                    await changelogManager.addToChangelog();
+                    console.log('\n✅ Changelog updated. Continuing with release...\n');
+                } else {
+                    console.log('\n⚠️  Proceeding with release without adding pending commits...\n');
+                }
+            }
+        }
+        
+        // Create release manager and run
+        const manager = new ReleaseManager(config);
+        await manager.release(options.type);
+        
+    } catch (error) {
+        console.error('Error:', error.message);
+        process.exit(1);
+    }
+}
 
-manager.release(options.type).catch(error => {
-    console.error('Error:', error.message);
-    process.exit(1);
-});
+// Run main function
+main();

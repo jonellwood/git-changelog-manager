@@ -92,6 +92,7 @@ Options:
   --github-token <token>   GitHub token (overrides env)
   --github-repo <repo>     GitHub repository (overrides env)
   --config <path>          Path to config file
+  --skip-pending-check     Skip checking for pending commits
   -h, --help              Display help
 ```
 
@@ -164,7 +165,7 @@ changelog-add -m "Fixed critical bug in authentication"
 changelog-release
 
 # Create minor release
-changelog-release -t minor
+changelog-release --type minor
 ```
 
 ### Advanced Usage
@@ -178,6 +179,40 @@ changelog-add -d "docs/releases" -f "unreleased.md"
 
 # Release with custom config
 changelog-release --config ./my-config.json
+
+# Skip pending commits check
+changelog-release --type minor --skip-pending-check
+```
+
+## Recommended Workflow
+
+The package follows a two-step workflow:
+
+1. **Add commits to changelog**: Use `changelog-add` to stage your recent commits into the draft changelog
+2. **Create release**: Use `changelog-release` to bump version, create tags, and publish
+
+```bash
+# After making commits
+changelog-add
+
+# Review the draft changelog
+cat changelog/releases/draft.md
+
+# Create a release
+changelog-release --type minor
+```
+
+### Automatic Pending Check
+
+When you run `changelog-release`, the tool automatically checks if you have commits that haven't been added to the changelog yet. If found, it will:
+
+1. Show a warning about pending commits
+2. Ask if you want to run `changelog-add` first
+3. If you choose yes, it will add the commits and continue with the release
+4. If you choose no, it will proceed with the release without adding the pending commits
+
+You can skip this check with `--skip-pending-check` if needed.
+
 ```
 
 ## Programmatic Usage
