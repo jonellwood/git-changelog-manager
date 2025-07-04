@@ -1,6 +1,6 @@
 {
   "name": "git-changelog-manager",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A comprehensive changelog management tool for automated release notes and version management",
   "main": "lib/index.js",
   "bin": {
