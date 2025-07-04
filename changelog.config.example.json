@@ -1,0 +1,25 @@
+{
+  "changelogDir": "changelog/releases",
+  "draftFileName": "draft.md",
+  "gitTimeRange": "1 day ago",
+  "versionFiles": [
+    {
+      "path": "package.json",
+      "jsonPath": "version"
+    },
+    {
+      "path": "composer.json",
+      "jsonPath": "version"
+    },
+    {
+      "path": "src/version.js",
+      "pattern": "version: ['\"]([^'\"]+)['\"]",
+      "replacement": "version: '{{version}}'"
+    },
+    {
+      "path": "src/config.php",
+      "pattern": "\\$version = ['\"]([^'\"]+)['\"];",
+      "replacement": "$version = '{{version}}';"
+    }
+  ]
+}

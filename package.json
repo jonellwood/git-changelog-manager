@@ -1,0 +1,43 @@
+{
+  "name": "git-changelog-manager",
+  "version": "1.0.0",
+  "description": "A comprehensive changelog management tool for automated release notes and version management",
+  "main": "lib/index.js",
+  "bin": {
+    "changelog-add": "bin/changelog-add.js",
+    "changelog-release": "bin/changelog-release.js",
+    "changelog-init": "bin/changelog-init.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "changelog",
+    "release",
+    "versioning",
+    "git",
+    "automation",
+    "markdown"
+  ],
+  "author": "Jonathan Ellwood",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "commander": "^11.1.0",
+    "semver": "^7.5.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.55.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonellwood/git-changelog-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jonellwood/git-changelog-manager/issues"
+  },
+  "homepage": "https://github.com/jonellwood/git-changelog-manager#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
