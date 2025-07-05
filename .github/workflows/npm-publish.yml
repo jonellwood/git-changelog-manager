@@ -15,6 +15,11 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     
+    # Add permissions for GitHub releases
+    permissions:
+      contents: write
+      packages: write
+    
     # Only run if the commit message includes version info, package.json changed, or it's a version tag
     if: contains(github.event.head_commit.message, 'version') || contains(github.event.head_commit.message, '.') || startsWith(github.ref, 'refs/tags/v')
     
@@ -50,22 +55,38 @@ jobs:
             echo "Version $CURRENT_VERSION is new, will publish"
           fi
           
-      - name: Publish to NPM
+      - name: Wait before publish (avoid conflicts)
         if: steps.version-check.outputs.version_exists == 'false'
-        run: npm publish
+        run: sleep 30
+        
+      - name: Publish to NPM with retry
+        if: steps.version-check.outputs.version_exists == 'false'
+        run: |
+          for i in {1..3}; do
+            echo "Attempt $i to publish to NPM..."
+            if npm publish; then
+              echo "✅ Successfully published to NPM"
+              break
+            else
+              echo "❌ Publish attempt $i failed"
+              if [ $i -lt 3 ]; then
+                echo "Waiting 60 seconds before retry..."
+                sleep 60
+              else
+                echo "All publish attempts failed"
+                exit 1
+              fi
+            fi
+          done
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           
       - name: Create GitHub Release
         if: steps.version-check.outputs.version_exists == 'false'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ steps.version-check.outputs.current_version }}
-          release_name: Release v${{ steps.version-check.outputs.current_version }}
-          body: |
-            🚀 **Automated Release v${{ steps.version-check.outputs.current_version }}**
+        run: |
+          gh release create v${{ steps.version-check.outputs.current_version }} \
+            --title "Release v${{ steps.version-check.outputs.current_version }}" \
+            --notes "🚀 **Automated Release v${{ steps.version-check.outputs.current_version }}**
             
             This release was automatically created and published to NPM.
             
@@ -73,11 +94,11 @@ jobs:
             - See commit history for detailed changes
             
             ### Installation
-            ```bash
+            \`\`\`bash
             npm install git-changelog-manager@${{ steps.version-check.outputs.current_version }}
-            ```
-          draft: false
-          prerelease: false
+            \`\`\`"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Notify success
         if: success()
