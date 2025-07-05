@@ -27,16 +27,19 @@ npm install --save-dev git-changelog-manager
 ## Quick Start
 
 1. **Initialize in your project:**
+
 ```bash
 changelog-init
 ```
 
 2. **Add recent commits to changelog:**
+
 ```bash
 changelog-add
 ```
 
 3. **Create a release:**
+
 ```bash
 changelog-release --type patch
 ```
@@ -285,12 +288,14 @@ The package can automatically polish your git commit messages using AI:
 - **Fallback**: If no AI key is provided, raw commit messages are used
 
 The AI will transform commit messages like:
+
 - `"fix: auth bug"` → `"- Fixed authentication bug"`
 - `"feat: user dashboard"` → `"- Added new user dashboard"`
 
 ## GitHub Integration
 
 When properly configured, the package will:
+
 1. Create git tags for releases
 2. Push changes to your repository
 3. Create GitHub releases with changelog content
