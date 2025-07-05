@@ -279,6 +279,28 @@ tag: v1.0.1
 - Improved performance <!-- hash:ghi789 -->
 ```
 
+## Rendering Examples
+
+Looking for ways to display your changelog data? Check out our **git-changelog-renderer-examples** repository for complete examples of how to render and display changelog data from this package:
+
+🎨 **[Git Changelog Renderer Examples](https://github.com/jonellwood/git-changelog-renderer-examples)**
+
+The repository includes:
+
+- **Vue.js Renderer**: Beautiful, Apple-inspired UI with search, filtering, and modal views
+- **React Examples** (coming soon)
+- **Vanilla JavaScript Examples** (coming soon)
+- **Integration Guides**: How to consume changelog data in different frameworks
+
+Each example shows how to:
+- Load and parse changelog markdown files
+- Display release notes in an attractive UI
+- Implement search and filtering
+- Handle version sorting and navigation
+- Create responsive layouts for different screen sizes
+
+Perfect for creating documentation sites, release note pages, or integrating changelog displays into your existing applications!
+
 ## AI Integration
 
 The package can automatically polish your git commit messages using AI:
