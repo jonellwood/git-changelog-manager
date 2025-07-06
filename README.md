@@ -281,18 +281,21 @@ tag: v1.0.1
 
 ## Rendering Examples
 
-Looking for ways to display your changelog data? Check out our **git-changelog-renderer-examples** repository for complete examples of how to render and display changelog data from this package:
+Looking for ways to display your changelog data? Check out our **git-changelog-renderer-examples** repositories for complete examples of how to render and display changelog data from this package:
 
-🎨 **[Git Changelog Renderer Examples](https://github.com/jonellwood/git-changelog-renderer-examples)**
+## 🎨 Example Renderers
 
-The repository includes:
+Explore different frontend implementations showcasing the changelog data:
 
-- **Vue.js Renderer**: Beautiful, Apple-inspired UI with search, filtering, and modal views
-- **React Examples** (coming soon)
-- **Vanilla JavaScript Examples** (coming soon)
-- **Integration Guides**: How to consume changelog data in different frameworks
+| Framework | Description | Demo | Status |
+|-----------|-------------|------|--------|
+| **Vue.js** | Modern, responsive UI with advanced search, filtering, and modal views for an enhanced user experience | [🌐 Live Demo](https://vue.jonellwood.dev) | [![Netlify Status](https://api.netlify.com/api/v1/badges/f7c08a3e-64c0-42f0-953f-62ad53b90978/deploy-status)](https://app.netlify.com/projects/vue-changelog-demo/deploys) |
+| **React** | Built with React 19 and Vite, featuring dual grid/list views, dark mode support, custom hooks, and modern component patterns | [🌐 Live Demo](https://react.jonellwood.dev) | [![Netlify Status](https://api.netlify.com/api/v1/badges/df1eae0c-deb3-475a-85de-00e8f8cf5c61/deploy-status)](https://app.netlify.com/projects/react-changelog-demo/deploys) |
+| **Vanilla JS** | Pure JavaScript implementation with no frameworks required, featuring lightweight performance, dual views, and easy customization | [🌐 Live Demo](https://vanilla.jonellwood.dev) | [![Netlify Status](https://api.netlify.com/api/v1/badges/fc9f9758-167b-441b-b307-6543d3554ba0/deploy-status)](https://app.netlify.com/projects/vanilla-changelog-demo/deploys) |
+| **SvelteKit** | Built with SvelteKit featuring Apple-inspired design, dark mode, statistics dashboard, and seamless search functionality | [🌐 Live Demo](https://svelte.jonellwood.dev) | [![Netlify Status](https://api.netlify.com/api/v1/badges/49bbde6d-4b1f-4967-b5d9-2c01bf5d0d66/deploy-status)](https://app.netlify.com/projects/svelte-changelog-demo/deploys) |
 
 Each example shows how to:
+
 - Load and parse changelog markdown files
 - Display release notes in an attractive UI
 - Implement search and filtering
@@ -300,6 +303,8 @@ Each example shows how to:
 - Create responsive layouts for different screen sizes
 
 Perfect for creating documentation sites, release note pages, or integrating changelog displays into your existing applications!
+
+**Need a different framework?** If you're looking for additional framework examples (Angular, Nuxt, Next.js, etc.), please [open an issue](https://github.com/jonellwood/git-changelog-manager/issues) or submit a PR with your implementation!
 
 ## AI Integration
 
